@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React from "react";
+import styled from "styled-components/macro";
 
-import { COLORS, WEIGHTS } from '../../constants';
-import { formatPrice, pluralize, isNewShoe } from '../../utils';
-import Spacer from '../Spacer';
+import { COLORS, WEIGHTS } from "../../constants";
+import { formatPrice, pluralize, isNewShoe } from "../../utils";
+import Spacer from "../Spacer";
 
 const ShoeCard = ({
   slug,
@@ -40,12 +40,22 @@ const ShoeCard = ({
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price sale={typeof salePrice === "number"}>
+            {formatPrice(price)}
+          </Price>
         </Row>
         <Row>
-          <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          <ColorInfo>{pluralize("Color", numOfColors)}</ColorInfo>
+          {typeof salePrice === "number" ? (
+            <SalePrice>{formatPrice(salePrice)}</SalePrice>
+          ) : null}
         </Row>
       </Wrapper>
+      {variant !== "default" ? (
+        <Banner variant={variant}>
+          {variant === "new-release" ? "New Release" : "Sale"}
+        </Banner>
+      ) : null}
     </Link>
   );
 };
@@ -53,29 +63,55 @@ const ShoeCard = ({
 const Link = styled.a`
   text-decoration: none;
   color: inherit;
-`;
-
-const Wrapper = styled.article``;
-
-const ImageWrapper = styled.div`
+  flex: 0 0 340px;
   position: relative;
 `;
 
-const Image = styled.img``;
+const Banner = styled.div`
+  text-transform: title;
+  position: absolute;
+  right: -4px;
+  top: 7px;
+  color: white;
+  font-weight: bold;
+  padding: 11px 7px 9px 9px;
+  border-radius: 2px;
+  background: ${(props) =>
+    props.variant === "new-release" ? COLORS.secondary : COLORS.primary};
+`;
+
+const Wrapper = styled.article`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  flex: 1;
+`;
+
+const Image = styled.img`
+  width: 100%;
+`;
 
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
 `;
 
 const Name = styled.h3`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.gray[900]};
+  margin-right: auto;
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  text-decoration: ${(props) => (props.sale ? "line-through" : "initial")};
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
+  margin-right: auto;
 `;
 
 const SalePrice = styled.span`
